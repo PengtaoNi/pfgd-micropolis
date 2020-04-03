@@ -40,6 +40,7 @@ public enum MicropolisTool
 	{
 		this.size = size;
 		this.cost = cost;
+		this.clk_cnt = 0;
 	}
 
 	public int getWidth()
@@ -91,5 +92,16 @@ public enum MicropolisTool
 	public int getToolCost()
 	{
 		return cost;
+	}
+	
+	public int getClkCnt()
+	{
+		return clk_cnt;
+	}
+	
+	public void incClkCnt()
+	{
+		clk_cnt++;
+		return;
 	}
 }
