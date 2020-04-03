@@ -29,10 +29,12 @@ public enum MicropolisTool
 	POWERPLANT(4, 3000),
 	NUCLEAR(4, 5000),
 	AIRPORT(6, 10000),
-	QUERY(1, 0);
+	QUERY(1, 0),
+	MOVEBLDG(1, 1);
 
 	int size;
 	int cost;
+	int clk_cnt;
 
 	private MicropolisTool(int size, int cost)
 	{
