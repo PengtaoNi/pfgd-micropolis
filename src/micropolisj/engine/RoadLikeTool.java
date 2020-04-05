@@ -12,9 +12,9 @@ import static micropolisj.engine.TileConstants.*;
 
 class RoadLikeTool extends ToolStroke
 {
-	RoadLikeTool(Micropolis city, MicropolisTool tool, int phase, int xpos, int ypos)
+	RoadLikeTool(Micropolis city, MicropolisTool tool, int xpos, int ypos)
 	{
-		super(city, tool, phase, xpos, ypos);
+		super(city, tool, xpos, ypos);
 	}
 
 	@Override

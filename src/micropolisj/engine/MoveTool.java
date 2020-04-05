@@ -4,29 +4,26 @@ import static micropolisj.engine.TileConstants.*;
 
 class MoveTool extends ToolStroke
 {	
-	public MoveTool(Micropolis city, MicropolisTool tool, int phase, int xpos, int ypos) {
-		super(city, tool, phase, xpos, ypos);
+	public MoveTool(Micropolis city, MicropolisTool tool, int xpos, int ypos) {
+		super(city, tool, xpos, ypos);
 	}
 
 	@Override
 	boolean apply1(ToolEffectIfc eff)
 	{
-		switch(tool)
-		{
-		default:
-			return applyMove(eff);
-		}
+		return applyMove(eff);
+	}
+	
+	@Override
+	boolean apply2(ToolEffectIfc eff, MoveInfo moveInfo)
+	{
+		return applyMove2(eff, moveInfo);
 	}
 	
 	boolean applyMove(ToolEffectIfc eff)
 	{
-		if (this.phase == 0) {
-			if (isZoneAny(eff.getTile(0, 0))) {
+		if (isZoneAny(eff.getTile(0, 0))) {
 				removeZone(eff);
-			}
-		}
-		else {
-			eff.setTile(0, 0, RUBBLE);
 		}
 		return true;
 	}
@@ -63,5 +60,11 @@ class MoveTool extends ToolStroke
 			}
 		}
 		return;
+	}
+	
+	boolean applyMove2(ToolEffectIfc eff, MoveInfo moveInfo)
+	{
+		eff.setTile(0, 0, RUBBLE);
+		return true;
 	}
 }

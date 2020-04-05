@@ -19,6 +19,7 @@ public class ToolPreview implements ToolEffectIfc
 	public int cost;
 	public ToolResult toolResult;
 	public List<SoundInfo> sounds;
+	public MoveInfo moveInfo;
 
 	public static class SoundInfo
 	{

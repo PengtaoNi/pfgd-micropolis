@@ -53,16 +53,16 @@ public enum MicropolisTool
 		return getWidth();
 	}
 
-	public ToolStroke beginStroke(Micropolis engine, int phase, int xpos, int ypos)
+	public ToolStroke beginStroke(Micropolis engine, int xpos, int ypos)
 	{
 		switch (this) {
 		case BULLDOZER:
-			return new Bulldozer(engine, phase, xpos, ypos);
+			return new Bulldozer(engine, xpos, ypos);
 
 		case WIRE:
 		case ROADS:
 		case RAIL:
-			return new RoadLikeTool(engine, this, phase, xpos, ypos);
+			return new RoadLikeTool(engine, this, xpos, ypos);
 
 		case FIRE:
 		case POLICE:
@@ -71,19 +71,19 @@ public enum MicropolisTool
 		case POWERPLANT:
 		case NUCLEAR:
 		case AIRPORT:
-			return new BuildingTool(engine, this, phase, xpos, ypos);
+			return new BuildingTool(engine, this, xpos, ypos);
 			
 		case MOVEBLDG:
-			return new MoveTool(engine, this, phase, xpos, ypos);
+			return new MoveTool(engine, this, xpos, ypos);
 
 		default:
-			return new ToolStroke(engine, this, phase, xpos, ypos);
+			return new ToolStroke(engine, this, xpos, ypos);
 		}
 	}
 
-	public ToolResult apply(Micropolis engine, int phase, int xpos, int ypos)
+	public ToolResult apply(Micropolis engine, int xpos, int ypos)
 	{
-		return beginStroke(engine, phase, xpos, ypos).apply();
+		return beginStroke(engine, xpos, ypos).apply();
 	}
 
 	/**

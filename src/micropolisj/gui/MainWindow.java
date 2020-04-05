@@ -44,7 +44,7 @@ public class MainWindow extends JFrame
 	JLabel currentToolCostLbl;
 	Map<MicropolisTool,JToggleButton> toolBtns;
 	EnumMap<MapState,JMenuItem> mapStateMenuItems = new EnumMap<MapState,JMenuItem>(MapState.class);
-	int prevPhase;
+	int phase = 0;
 	MicropolisTool prevTool;
 	MicropolisTool currentTool;
 	File currentFile;
@@ -53,6 +53,7 @@ public class MainWindow extends JFrame
 	boolean dirty2 = false;  //indicates if simulator took a step since last save
 	long lastSavedTime = 0;  //real-time clock of when file was last saved
 	boolean autoBudgetPending;
+	MoveInfo moveInfo;
 
 	static ImageIcon appIcon;
 	static {
@@ -1186,18 +1187,19 @@ public class MainWindow extends JFrame
 			this.toolStroke = null;
 		}
 		else if (currentTool == MicropolisTool.MOVEBLDG) {
-			if (prevTool == MicropolisTool.MOVEBLDG) {
-				this.toolStroke = currentTool.beginStroke(engine, 1-prevPhase, x, y);
-				prevPhase = 1-prevPhase;
+			if (prevTool == MicropolisTool.MOVEBLDG && phase == 1) {
+				this.toolStroke = currentTool.beginStroke(engine, x, y);
+				movePreviewTool();
+				phase = 0;
 			}
 			else {
-				this.toolStroke = currentTool.beginStroke(engine, 0, x, y);
-				prevPhase = 0;
+				this.toolStroke = currentTool.beginStroke(engine, x, y);
+				previewTool();
+				phase = 1;
 			}
-			previewTool();
 		}
 		else {
-			this.toolStroke = currentTool.beginStroke(engine, 0, x, y);
+			this.toolStroke = currentTool.beginStroke(engine, x, y);
 			previewTool();
 		}
 		prevTool = currentTool;
@@ -1249,8 +1251,30 @@ public class MainWindow extends JFrame
 			toolStroke.getBounds(),
 			currentTool
 			);
+		if (currentTool == MicropolisTool.MOVEBLDG) {
+			ToolPreview toolPreview = toolStroke.getPreview();
+			moveInfo = toolPreview.moveInfo;
+			drawingArea.setToolPreview(
+				toolPreview
+				);
+		}
+		else {
+			drawingArea.setToolPreview(
+				toolStroke.getPreview()
+				);
+		}
+	}
+	
+	void movePreviewTool() {
+		assert this.toolStroke != null;
+		assert this.currentTool != null;
+
+		drawingArea.setToolCursor(
+			toolStroke.getBounds(),
+			currentTool
+			);
 		drawingArea.setToolPreview(
-			toolStroke.getPreview()
+			toolStroke.getMovePreview(moveInfo)
 			);
 	}
 

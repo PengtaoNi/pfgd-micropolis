@@ -14,18 +14,16 @@ public class ToolStroke
 {
 	final Micropolis city;
 	final MicropolisTool tool;
-	int phase;
 	int xpos;
 	int ypos;
 	int xdest;
 	int ydest;
 	boolean inPreview;
 
-	ToolStroke(Micropolis city, MicropolisTool tool, int phase, int xpos, int ypos)
+	ToolStroke(Micropolis city, MicropolisTool tool, int xpos, int ypos)
 	{
 		this.city = city;
 		this.tool = tool;
-		this.phase = phase;
 		this.xpos = xpos;
 		this.ypos = ypos;
 		this.xdest = xpos;
@@ -38,6 +36,19 @@ public class ToolStroke
 		inPreview = true;
 		try {
 			applyArea(eff);
+		}
+		finally {
+			inPreview = false;
+		}
+		return eff.preview;
+	}
+	
+	public ToolPreview getMovePreview(MoveInfo moveInfo)
+	{
+		ToolEffect eff = new ToolEffect(city);
+		inPreview = true;
+		try {
+			applyMoveArea(eff, moveInfo);
 		}
 		finally {
 			inPreview = false;
@@ -62,6 +73,17 @@ public class ToolStroke
 			}
 		}
 	}
+	
+	protected void applyMoveArea(ToolEffectIfc eff, MoveInfo moveInfo)
+	{
+		CityRect r = getBounds();
+
+		for (int i = 0; i < r.height; i += tool.getHeight()) {
+			for (int j = 0; j < r.width; j += tool.getWidth()) {
+				apply2(new TranslatedToolEffect(eff, r.x+j, r.y+i), moveInfo);
+			}
+		}
+	}
 
 	boolean apply1(ToolEffectIfc eff)
 	{
@@ -83,6 +105,11 @@ public class ToolStroke
 			// not expected
 			throw new Error("unexpected tool: "+tool);
 		}
+	}
+	
+	boolean apply2(ToolEffectIfc eff, MoveInfo moveInfo)
+	{
+		return true;
 	}
 
 	public void dragTo(int xdest, int ydest)
