@@ -57,8 +57,6 @@ class MoveTool extends ToolStroke
 		assert dim.width >= 3;
 		assert dim.height >= 3;
 
-		eff.spend(1);
-
 		for (int ddx = -1; ddx < dim.width; ddx++) {
 			for (int ddy = -1; ddy < dim.height; ddy++) {
 				eff.setTile(dx+ddx, dy+ddy, DIRT);
