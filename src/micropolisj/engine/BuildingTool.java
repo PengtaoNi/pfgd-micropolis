@@ -12,9 +12,9 @@ import static micropolisj.engine.TileConstants.*;
 
 class BuildingTool extends ToolStroke
 {
-	public BuildingTool(Micropolis engine, MicropolisTool tool, int xpos, int ypos)
+	public BuildingTool(Micropolis engine, MicropolisTool tool, int phase, int xpos, int ypos)
 	{
-		super(engine, tool, xpos, ypos);
+		super(engine, tool, phase, xpos, ypos);
 	}
 
 	@Override

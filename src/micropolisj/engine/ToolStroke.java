@@ -14,16 +14,18 @@ public class ToolStroke
 {
 	final Micropolis city;
 	final MicropolisTool tool;
+	int phase;
 	int xpos;
 	int ypos;
 	int xdest;
 	int ydest;
 	boolean inPreview;
 
-	ToolStroke(Micropolis city, MicropolisTool tool, int xpos, int ypos)
+	ToolStroke(Micropolis city, MicropolisTool tool, int phase, int xpos, int ypos)
 	{
 		this.city = city;
 		this.tool = tool;
+		this.phase = phase;
 		this.xpos = xpos;
 		this.ypos = ypos;
 		this.xdest = xpos;

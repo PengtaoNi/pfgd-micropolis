@@ -4,8 +4,8 @@ import static micropolisj.engine.TileConstants.*;
 
 class MoveTool extends ToolStroke
 {	
-	MoveTool(Micropolis city, MicropolisTool tool, int xpos, int ypos) {
-		super(city, tool, xpos, ypos);
+	public MoveTool(Micropolis city, MicropolisTool tool, int phase, int xpos, int ypos) {
+		super(city, tool, phase, xpos, ypos);
 	}
 
 	@Override
@@ -20,12 +20,11 @@ class MoveTool extends ToolStroke
 	
 	boolean applyMove(ToolEffectIfc eff)
 	{
-		int clk_cnt = tool.getClkCnt();
-		if (clk_cnt == 0) {
+		if (this.phase == 0) {
 			eff.setTile(0, 0, DIRT);
 		}
 		else {
-			eff.setTile(0, 0, RIVER);
+			eff.setTile(0, 0, RUBBLE);
 		}
 		return true;
 	}

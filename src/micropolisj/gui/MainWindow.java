@@ -44,6 +44,8 @@ public class MainWindow extends JFrame
 	JLabel currentToolCostLbl;
 	Map<MicropolisTool,JToggleButton> toolBtns;
 	EnumMap<MapState,JMenuItem> mapStateMenuItems = new EnumMap<MapState,JMenuItem>(MapState.class);
+	int prevPhase;
+	MicropolisTool prevTool;
 	MicropolisTool currentTool;
 	File currentFile;
 	boolean doSounds = true;
@@ -1183,10 +1185,22 @@ public class MainWindow extends JFrame
 			doQueryTool(x, y);
 			this.toolStroke = null;
 		}
-		else {
-			this.toolStroke = currentTool.beginStroke(engine, x, y);
+		else if (currentTool == MicropolisTool.MOVEBLDG) {
+			if (prevTool == MicropolisTool.MOVEBLDG) {
+				this.toolStroke = currentTool.beginStroke(engine, 1-prevPhase, x, y);
+				prevPhase = 1-prevPhase;
+			}
+			else {
+				this.toolStroke = currentTool.beginStroke(engine, 0, x, y);
+				prevPhase = 0;
+			}
 			previewTool();
 		}
+		else {
+			this.toolStroke = currentTool.beginStroke(engine, 0, x, y);
+			previewTool();
+		}
+		prevTool = currentTool;
 
 		this.lastX = x;
 		this.lastY = y;

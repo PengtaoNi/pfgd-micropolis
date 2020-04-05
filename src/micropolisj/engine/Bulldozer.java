@@ -12,9 +12,9 @@ import static micropolisj.engine.TileConstants.*;
 
 class Bulldozer extends ToolStroke
 {
-	Bulldozer(Micropolis city, int xpos, int ypos)
+	Bulldozer(Micropolis city, int phase, int xpos, int ypos)
 	{
-		super(city, MicropolisTool.BULLDOZER, xpos, ypos);
+		super(city, MicropolisTool.BULLDOZER, phase, xpos, ypos);
 	}
 
 	@Override
