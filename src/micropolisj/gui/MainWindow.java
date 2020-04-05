@@ -1225,7 +1225,7 @@ public class MainWindow extends JFrame
 
 	private void onToolUp(MouseEvent ev)
 	{
-		if (toolStroke != null) {
+		if (toolStroke != null && currentTool != MicropolisTool.MOVEBLDG) {
 			drawingArea.setToolPreview(null);
 
 			CityLocation loc = toolStroke.getLocation();
@@ -1244,6 +1244,7 @@ public class MainWindow extends JFrame
 
 	void previewTool()
 	{
+		MoveInfo moveInfo;
 		assert this.toolStroke != null;
 		assert this.currentTool != null;
 
@@ -1254,6 +1255,7 @@ public class MainWindow extends JFrame
 		if (currentTool == MicropolisTool.MOVEBLDG) {
 			ToolPreview toolPreview = toolStroke.getPreview();
 			moveInfo = toolPreview.moveInfo;
+			System.out.println(moveInfo.currTile);
 			drawingArea.setToolPreview(
 				toolPreview
 				);

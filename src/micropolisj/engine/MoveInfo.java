@@ -10,7 +10,7 @@ package micropolisj.engine;
 
 public class MoveInfo
 {
-	int currTile;
+	public int currTile;
 	
 	MoveInfo(int currTile) {
 		this.currTile = currTile;

@@ -7,12 +7,35 @@ class MoveTool extends ToolStroke
 	public MoveTool(Micropolis city, MicropolisTool tool, int xpos, int ypos) {
 		super(city, tool, xpos, ypos);
 	}
-
+	
 	@Override
-	boolean apply1(ToolEffectIfc eff)
+	public ToolPreview getPreview()
 	{
-		return applyMove(eff);
+		CityRect r = getBounds();
+		ToolEffect eff = new ToolEffect(city);
+		MoveInfo moveInfo;
+		inPreview = true;
+		try {
+			moveInfo = applyMove(new TranslatedToolEffect(eff, r.x, r.y));
+			System.out.println(moveInfo.currTile);
+			eff.preview.moveInfo = moveInfo;
+		}
+		finally {
+			inPreview = false;
+		}
+		return eff.preview;
 	}
+	
+//	protected MoveInfo applyMoveArea1(ToolEffectIfc eff)
+//	{
+//		CityRect r = getBounds();
+//
+//		for (int i = 0; i < r.height; i += tool.getHeight()) {
+//			for (int j = 0; j < r.width; j += tool.getWidth()) {
+//				apply1(new TranslatedToolEffect(eff, r.x+j, r.y+i));
+//			}
+//		}
+//	}
 	
 	@Override
 	boolean apply2(ToolEffectIfc eff, MoveInfo moveInfo)
@@ -20,17 +43,21 @@ class MoveTool extends ToolStroke
 		return applyMove2(eff, moveInfo);
 	}
 	
-	boolean applyMove(ToolEffectIfc eff)
+	MoveInfo applyMove(ToolEffectIfc eff)
 	{
+		MoveInfo moveInfo = new MoveInfo(0);
 		if (isZoneAny(eff.getTile(0, 0))) {
-				removeZone(eff);
+			moveInfo = removeZone(eff);
 		}
-		return true;
+		return moveInfo;
 	}
 	
-	void removeZone(ToolEffectIfc eff)
+	MoveInfo removeZone(ToolEffectIfc eff)
 	{
+		MoveInfo moveInfo = new MoveInfo(0);
 		int currTile = eff.getTile(0, 0);
+		moveInfo.currTile = currTile;
+		System.out.println(currTile);
 		int dx = 0;
 		int dy = 0;
 		
@@ -59,12 +86,54 @@ class MoveTool extends ToolStroke
 				eff.setTile(dx+ddx, dy+ddy, DIRT);
 			}
 		}
-		return;
+		return moveInfo;
 	}
 	
 	boolean applyMove2(ToolEffectIfc eff, MoveInfo moveInfo)
 	{
-		eff.setTile(0, 0, RUBBLE);
+		int base = moveInfo.currTile;
+		
+		TileSpec.BuildingInfo bi = Tiles.get(base).getBuildingInfo();
+		if (bi == null) {
+			throw new Error("Cannot applyZone to #"+base);
+		}
+
+		int cost = tool.getToolCost();
+		boolean canBuild = true;
+		for (int rowNum = 0; rowNum < bi.height; rowNum++) {
+			for (int columnNum = 0; columnNum < bi.width; columnNum++)
+			{
+				int tileValue = eff.getTile(columnNum, rowNum);
+				tileValue = tileValue & LOMASK;
+
+				if (tileValue != DIRT) {
+					if (city.autoBulldoze && canAutoBulldozeZ((char)tileValue)) {
+						cost++;
+					}
+					else {
+						canBuild = false;
+					}
+				}
+			}
+		}
+		if (!canBuild) {
+			eff.toolResult(ToolResult.UH_OH);
+			return false;
+		}
+
+		eff.spend(cost);
+
+		int i = 0;
+		for (int rowNum = 0; rowNum < bi.height; rowNum++)
+		{
+			for (int columnNum = 0; columnNum < bi.width; columnNum++)
+			{
+				eff.setTile(columnNum, rowNum, (char) bi.members[i]);
+				i++;
+			}
+		}
+
+		fixBorder(eff, bi.width, bi.height);
 		return true;
 	}
 }

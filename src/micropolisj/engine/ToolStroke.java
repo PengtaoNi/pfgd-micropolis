@@ -30,7 +30,7 @@ public class ToolStroke
 		this.ydest = ypos;
 	}
 
-	public final ToolPreview getPreview()
+	public ToolPreview getPreview()
 	{
 		ToolEffect eff = new ToolEffect(city);
 		inPreview = true;
