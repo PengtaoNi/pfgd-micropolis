@@ -68,8 +68,8 @@ class MoveTool extends ToolStroke
 		int dx = 0;
 		int dy = 0;
 		
-		for (dx = -3; dx <= 1; dx++) {
-			for (dy = -3; dy <= 1; dy++) {
+		for (dx = -4; dx <= 1; dx++) {
+			for (dy = -4; dy <= 1; dy++) {
 				if (isZoneCenter(eff.getTile(dx, dy))) {
 					currTile = eff.getTile(dx, dy);
 					break;
@@ -88,8 +88,8 @@ class MoveTool extends ToolStroke
 		assert dim.width >= 3;
 		assert dim.height >= 3;
 
-		for (int ddx = -1; ddx < dim.width; ddx++) {
-			for (int ddy = -1; ddy < dim.height; ddy++) {
+		for (int ddx = -1; ddx < dim.width-1; ddx++) {
+			for (int ddy = -1; ddy < dim.height-1; ddy++) {
 				eff.setTile(dx+ddx, dy+ddy, DIRT);
 			}
 		}
@@ -104,7 +104,43 @@ class MoveTool extends ToolStroke
 		
 		if (240 <= currTile && currTile < 249) {
 			base = RESCLR;
-			cost = 500;
+			cost = 50;
+		}
+		else if (423 <= currTile && currTile < 432) {
+			base = COMCLR;
+			cost = 50;
+		}
+		else if (612 <= currTile && currTile < 621) {
+			base = INDCLR;
+			cost = 50;
+		}
+		else if (761 <= currTile && currTile < 770) {
+			base = FIRESTATION;
+			cost = 250;
+		}
+		else if (770 <= currTile && currTile < 779) {
+			base = POLICESTATION;
+			cost = 250;
+		}
+		else if (745 <= currTile && currTile < 761) {
+			base = POWERPLANT;
+			cost = 1500;
+		}		
+		else if (811 <= currTile && currTile < 827) {
+			base = NUCLEAR;
+			cost = 2500;
+		}
+		else if (779 <= currTile && currTile < 795) {
+			base = STADIUM;
+			cost = 2500;
+		}
+		else if (693 <= currTile && currTile < 709) {
+			base = PORT;
+			cost = 1500;
+		}
+		else if (709 <= currTile && currTile < 745) {
+			base = AIRPORT;
+			cost = 5000;
 		}
 		
 		TileSpec.BuildingInfo bi = Tiles.get(base).getBuildingInfo();
