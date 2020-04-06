@@ -38,6 +38,16 @@ class TranslatedToolEffect implements ToolEffectIfc
 	{
 		base.setTile(x+dx, y+dy, tileValue);
 	}
+	
+	public int getXCoord()
+	{
+		return dx;
+	}
+
+	public int getYCoord()
+	{
+		return dy;
+	}
 
 	//implements ToolEffectIfc
 	public void spend(int amount)

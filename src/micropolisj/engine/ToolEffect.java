@@ -59,7 +59,17 @@ class ToolEffect implements ToolEffectIfc
 	{
 		preview.setTile(dx, dy, tileValue);
 	}
+	
+	public int getXCoord()
+	{
+		return preview.offsetX;
+	}
 
+	public int getYCoord()
+	{
+		return preview.offsetY;
+	}
+	
 	//implements ToolEffectIfc
 	public void spend(int amount)
 	{

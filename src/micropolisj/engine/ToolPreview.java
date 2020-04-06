@@ -152,6 +152,16 @@ public class ToolPreview implements ToolEffectIfc
 		expandTo(dx, dy);
 		tiles[offsetY+dy][offsetX+dx] = (short)tileValue;
 	}
+	
+	public int getXCoord()
+	{
+		return this.offsetX;
+	}
+
+	public int getYCoord()
+	{
+		return this.offsetY;
+	}
 
 	//implements ToolEffectIfc
 	public void spend(int amount)

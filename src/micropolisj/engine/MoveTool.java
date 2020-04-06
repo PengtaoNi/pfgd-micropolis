@@ -53,7 +53,7 @@ class MoveTool extends ToolStroke
 	
 	MoveInfo applyMove(ToolEffectIfc eff)
 	{
-		MoveInfo moveInfo = new MoveInfo(0);
+		MoveInfo moveInfo = new MoveInfo(0, 0, 0);
 		if (isZoneAny(eff.getTile(0, 0))) {
 			moveInfo = removeZone(eff);
 		}
@@ -62,15 +62,18 @@ class MoveTool extends ToolStroke
 	
 	MoveInfo removeZone(ToolEffectIfc eff)
 	{
-		MoveInfo moveInfo = new MoveInfo(0);
+		MoveInfo moveInfo = new MoveInfo(0, 0, 0);
 		int currTile = eff.getTile(0, 0);
 		moveInfo.currTile = currTile;
+		int buildingType = getBuildingType(currTile);
+		int dim = getDim(buildingType);
 		int dx = 0;
 		int dy = 0;
 		
-		for (dx = -4; dx <= 1; dx++) {
-			for (dy = -4; dy <= 1; dy++) {
-				if (isZoneCenter(eff.getTile(dx, dy))) {
+		for (dx = -(dim-2); dx <= 1; dx++) {
+			for (dy = -(dim-2); dy <= 1; dy++) {
+				if (isZoneCenter(eff.getTile(dx, dy)) &&
+					getBuildingType(eff.getTile(dx, dy)) == buildingType) {
 					currTile = eff.getTile(dx, dy);
 					break;
 				}
@@ -80,72 +83,26 @@ class MoveTool extends ToolStroke
 			}
 		}
 
-		// zone center bit is set
-		assert isZoneCenter(currTile);
-
-		CityDimension dim = getZoneSizeFor(currTile);
-		assert dim != null;
-		assert dim.width >= 3;
-		assert dim.height >= 3;
-
-		for (int ddx = -1; ddx < dim.width-1; ddx++) {
-			for (int ddy = -1; ddy < dim.height-1; ddy++) {
+		for (int ddx = -1; ddx < dim-1; ddx++) {
+			for (int ddy = -1; ddy < dim-1; ddy++) {
 				eff.setTile(dx+ddx, dy+ddy, DIRT);
 			}
 		}
+		moveInfo.origX = eff.getXCoord() + dx - 1;
+		moveInfo.origY = eff.getYCoord() + dy - 1;
 		return moveInfo;
 	}
 	
 	boolean applyMove2(ToolEffectIfc eff, MoveInfo moveInfo)
 	{
 		int currTile = moveInfo.currTile;
-		int base = 0;
-		int cost = 0;
-		
-		if (240 <= currTile && currTile < 249) {
-			base = RESCLR;
-			cost = 50;
-		}
-		else if (423 <= currTile && currTile < 432) {
-			base = COMCLR;
-			cost = 50;
-		}
-		else if (612 <= currTile && currTile < 621) {
-			base = INDCLR;
-			cost = 50;
-		}
-		else if (761 <= currTile && currTile < 770) {
-			base = FIRESTATION;
-			cost = 250;
-		}
-		else if (770 <= currTile && currTile < 779) {
-			base = POLICESTATION;
-			cost = 250;
-		}
-		else if (745 <= currTile && currTile < 761) {
-			base = POWERPLANT;
-			cost = 1500;
-		}		
-		else if (811 <= currTile && currTile < 827) {
-			base = NUCLEAR;
-			cost = 2500;
-		}
-		else if (779 <= currTile && currTile < 795) {
-			base = STADIUM;
-			cost = 2500;
-		}
-		else if (693 <= currTile && currTile < 709) {
-			base = PORT;
-			cost = 1500;
-		}
-		else if (709 <= currTile && currTile < 745) {
-			base = AIRPORT;
-			cost = 5000;
-		}
+		int base = getBuildingType(currTile);
+		int cost = getCost(currTile);
 		
 		TileSpec.BuildingInfo bi = Tiles.get(base).getBuildingInfo();
 		if (bi == null) {
-			throw new Error("Cannot applyZone to #"+base);
+			//throw new Error("Cannot applyZone to #"+base);
+			return false;
 		}
 
 		boolean canBuild = true;
@@ -166,6 +123,19 @@ class MoveTool extends ToolStroke
 			}
 		}
 		if (!canBuild) {
+			int dx = moveInfo.origX - eff.getXCoord();
+			int dy = moveInfo.origY - eff.getYCoord();
+			int i = 0;
+			for (int rowNum = dy; rowNum < dy+bi.height; rowNum++)
+			{
+				for (int columnNum = dx; columnNum < dx+bi.width; columnNum++)
+				{
+					eff.setTile(columnNum, rowNum, (char) bi.members[i]);
+					i++;
+				}
+			}
+			cost = 0;
+			
 			eff.toolResult(ToolResult.UH_OH);
 			return false;
 		}
@@ -184,5 +154,90 @@ class MoveTool extends ToolStroke
 
 		fixBorder(eff, bi.width, bi.height);
 		return true;
+	}
+	
+	int getBuildingType(int currTile)
+	{
+		int base = 0;
+		if (240 <= currTile && currTile < 249) {
+			base = RESCLR;
+		}
+		else if (423 <= currTile && currTile < 432) {
+			base = COMCLR;
+		}
+		else if (612 <= currTile && currTile < 621) {
+			base = INDCLR;
+		}
+		else if (761 <= currTile && currTile < 770) {
+			base = FIRESTATION;
+		}
+		else if (770 <= currTile && currTile < 779) {
+			base = POLICESTATION;
+		}
+		else if (745 <= currTile && currTile < 761) {
+			base = POWERPLANT;
+		}		
+		else if (811 <= currTile && currTile < 827) {
+			base = NUCLEAR;
+		}
+		else if (779 <= currTile && currTile < 795) {
+			base = STADIUM;
+		}
+		else if (693 <= currTile && currTile < 709) {
+			base = PORT;
+		}
+		else if (709 <= currTile && currTile < 745) {
+			base = AIRPORT;
+		}
+		return base;
+	}
+	
+	int getCost(int currTile)
+	{
+		int cost = 0;
+		if (240 <= currTile && currTile < 249) {
+			cost = 50;
+		}
+		else if (423 <= currTile && currTile < 432) {
+			cost = 50;
+		}
+		else if (612 <= currTile && currTile < 621) {
+			cost = 50;
+		}
+		else if (761 <= currTile && currTile < 770) {
+			cost = 250;
+		}
+		else if (770 <= currTile && currTile < 779) {
+			cost = 250;
+		}
+		else if (745 <= currTile && currTile < 761) {
+			cost = 1500;
+		}		
+		else if (811 <= currTile && currTile < 827) {
+			cost = 2500;
+		}
+		else if (779 <= currTile && currTile < 795) {
+			cost = 2500;
+		}
+		else if (693 <= currTile && currTile < 709) {
+			cost = 1500;
+		}
+		else if (709 <= currTile && currTile < 745) {
+			cost = 5000;
+		}
+		return cost;
+	}
+	
+	int getDim(int buildingType)
+	{
+		int dim = 3;
+		if (buildingType == POWERPLANT || buildingType == NUCLEAR ||
+			buildingType == STADIUM || buildingType == PORT) {
+			dim = 4;
+		}
+		if (buildingType == AIRPORT) {
+			dim = 6;
+		}
+		return dim;
 	}
 }

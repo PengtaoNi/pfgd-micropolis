@@ -22,6 +22,9 @@ public interface ToolEffectIfc
 	 * Sets the tile value at a relative location.
 	 */
 	void setTile(int dx, int dy, int tileValue);
+	
+	int getXCoord();
+	int getYCoord();
 
 	/**
 	 * Deduct an amount from the controller's cash funds.

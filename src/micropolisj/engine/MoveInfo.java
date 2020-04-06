@@ -11,8 +11,12 @@ package micropolisj.engine;
 public class MoveInfo
 {
 	public int currTile;
+	public int origX;
+	public int origY;
 	
-	MoveInfo(int currTile) {
+	MoveInfo(int currTile, int origX, int origY) {
 		this.currTile = currTile;
+		this.origX = origX;
+		this.origY = origY;
 	}
 }
