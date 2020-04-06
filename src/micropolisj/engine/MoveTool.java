@@ -17,13 +17,21 @@ class MoveTool extends ToolStroke
 		inPreview = true;
 		try {
 			moveInfo = applyMove(new TranslatedToolEffect(eff, r.x, r.y));
-			System.out.println(moveInfo.currTile);
 			eff.preview.moveInfo = moveInfo;
 		}
 		finally {
 			inPreview = false;
 		}
 		return eff.preview;
+	}
+	
+	@Override
+	public ToolResult apply()
+	{
+		CityRect r = getBounds();
+		ToolEffect eff = new ToolEffect(city);
+		MoveInfo moveInfo = applyMove(new TranslatedToolEffect(eff, r.x, r.y));
+		return eff.apply();
 	}
 	
 //	protected MoveInfo applyMoveArea1(ToolEffectIfc eff)
@@ -57,7 +65,6 @@ class MoveTool extends ToolStroke
 		MoveInfo moveInfo = new MoveInfo(0);
 		int currTile = eff.getTile(0, 0);
 		moveInfo.currTile = currTile;
-		System.out.println(currTile);
 		int dx = 0;
 		int dy = 0;
 		
@@ -91,14 +98,20 @@ class MoveTool extends ToolStroke
 	
 	boolean applyMove2(ToolEffectIfc eff, MoveInfo moveInfo)
 	{
-		int base = moveInfo.currTile;
+		int currTile = moveInfo.currTile;
+		int base = 0;
+		int cost = 0;
+		
+		if (240 <= currTile && currTile < 249) {
+			base = RESCLR;
+			cost = 500;
+		}
 		
 		TileSpec.BuildingInfo bi = Tiles.get(base).getBuildingInfo();
 		if (bi == null) {
 			throw new Error("Cannot applyZone to #"+base);
 		}
 
-		int cost = tool.getToolCost();
 		boolean canBuild = true;
 		for (int rowNum = 0; rowNum < bi.height; rowNum++) {
 			for (int columnNum = 0; columnNum < bi.width; columnNum++)

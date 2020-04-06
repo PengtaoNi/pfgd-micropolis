@@ -56,10 +56,18 @@ public class ToolStroke
 		return eff.preview;
 	}
 
-	public final ToolResult apply()
+	public ToolResult apply()
 	{
 		ToolEffect eff = new ToolEffect(city);
 		applyArea(eff);
+		return eff.apply();
+	}
+	
+	public ToolResult applyM(MoveInfo moveInfo)
+	{
+		ToolEffect eff = new ToolEffect(city);
+		System.out.print(moveInfo.currTile);
+		applyMoveArea(eff, moveInfo);
 		return eff.apply();
 	}
 
