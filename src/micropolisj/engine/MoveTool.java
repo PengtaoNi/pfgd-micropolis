@@ -46,9 +46,9 @@ class MoveTool extends ToolStroke
 //	}
 	
 	@Override
-	boolean apply2(ToolEffectIfc eff, MoveInfo moveInfo)
+	boolean apply2(ToolEffectIfc eff, MoveInfo moveInfo, int fund)
 	{
-		return applyMove2(eff, moveInfo);
+		return applyMove2(eff, moveInfo, fund);
 	}
 	
 	MoveInfo applyMove(ToolEffectIfc eff)
@@ -93,7 +93,7 @@ class MoveTool extends ToolStroke
 		return moveInfo;
 	}
 	
-	boolean applyMove2(ToolEffectIfc eff, MoveInfo moveInfo)
+	boolean applyMove2(ToolEffectIfc eff, MoveInfo moveInfo, int fund)
 	{
 		int currTile = moveInfo.currTile;
 		int base = getBuildingType(currTile);
@@ -137,6 +137,23 @@ class MoveTool extends ToolStroke
 			cost = 0;
 			
 			eff.toolResult(ToolResult.UH_OH);
+			return false;
+		}
+		else if (fund < cost) {
+			int dx = moveInfo.origX - eff.getXCoord();
+			int dy = moveInfo.origY - eff.getYCoord();
+			int i = 0;
+			for (int rowNum = dy; rowNum < dy+bi.height; rowNum++)
+			{
+				for (int columnNum = dx; columnNum < dx+bi.width; columnNum++)
+				{
+					eff.setTile(columnNum, rowNum, (char) bi.members[i]);
+					i++;
+				}
+			}
+			cost = 0;
+			
+			eff.toolResult(ToolResult.INSUFFICIENT_FUNDS);
 			return false;
 		}
 

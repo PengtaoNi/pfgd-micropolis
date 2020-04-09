@@ -1260,7 +1260,6 @@ public class MainWindow extends JFrame
 		if (currentTool == MicropolisTool.MOVEBLDG) {
 			ToolPreview toolPreview = toolStroke.getPreview();
 			moveInfo = toolPreview.moveInfo;
-			System.out.println(moveInfo.currTile);
 			drawingArea.setToolPreview(
 				toolPreview
 				);

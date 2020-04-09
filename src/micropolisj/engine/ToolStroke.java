@@ -66,7 +66,6 @@ public class ToolStroke
 	public ToolResult applyM(MoveInfo moveInfo)
 	{
 		ToolEffect eff = new ToolEffect(city);
-		System.out.print(moveInfo.currTile);
 		applyMoveArea(eff, moveInfo);
 		return eff.apply();
 	}
@@ -88,7 +87,7 @@ public class ToolStroke
 
 		for (int i = 0; i < r.height; i += tool.getHeight()) {
 			for (int j = 0; j < r.width; j += tool.getWidth()) {
-				apply2(new TranslatedToolEffect(eff, r.x+j, r.y+i), moveInfo);
+				apply2(new TranslatedToolEffect(eff, r.x+j, r.y+i), moveInfo, city.budget.totalFunds);
 			}
 		}
 	}
@@ -115,7 +114,7 @@ public class ToolStroke
 		}
 	}
 	
-	boolean apply2(ToolEffectIfc eff, MoveInfo moveInfo)
+	boolean apply2(ToolEffectIfc eff, MoveInfo moveInfo, int fund)
 	{
 		return true;
 	}
